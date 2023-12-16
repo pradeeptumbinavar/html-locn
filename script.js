@@ -77,6 +77,56 @@ function distance(lat1, lon1, lat2, lon2) {
   return distance;
 }
 
+// ... (previously defined functions)
+
+function calculatePrice(distance, vehicleType) {
+  let pricePerKm = 0;
+  switch (vehicleType) {
+    case 'car':
+      pricePerKm = 50;
+      break;
+    case 'bus':
+      pricePerKm = 60;
+      break;
+    case 'truck':
+      pricePerKm = 70;
+      break;
+    default:
+      break;
+  }
+  return distance * pricePerKm;
+}
+
+function stopTracking() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(position => {
+      const endCoords = position.coords;
+      intermediateCoords.push(endCoords);
+      document.getElementById('stopCoordinates').textContent = `Lat: ${endCoords.latitude}, Lng: ${endCoords.longitude}`;
+      let distanceTravelled = calculateDistance();
+      let selectedVehicleType;
+      if (document.getElementById('carCheckbox').checked) {
+        selectedVehicleType = 'car';
+      } else if (document.getElementById('busCheckbox').checked) {
+        selectedVehicleType = 'bus';
+      } else if (document.getElementById('truckCheckbox').checked) {
+        selectedVehicleType = 'truck';
+      }
+      let totalPrice = calculatePrice(distanceTravelled, selectedVehicleType);
+      distanceTravelledDisplay.textContent = distanceTravelled.toFixed(2);
+      document.getElementById('totalPrice').textContent = totalPrice;
+      displayMap();
+    }, error => {
+      console.error("Error getting the ending location:", error);
+    });
+  } else {
+    console.log("Geolocation is not supported by this browser.");
+  }
+}
+
+// ... (remaining functions)
+
+
 function toRad(deg) {
   return deg * (Math.PI / 180);
 }
